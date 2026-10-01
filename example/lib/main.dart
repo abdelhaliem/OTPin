@@ -51,7 +51,10 @@ class OTPinDemoScreen extends StatefulWidget {
 }
 
 class _OTPinDemoScreenState extends State<OTPinDemoScreen> {
-  final OTPinController _otpController = OTPinController(length: 4);
+  /// Current OTP length.
+  int _otpLength = 4;
+
+  late OTPinController _otpController;
 
   /// Selected animation style.
   DemoStyle _selectedStyle = DemoStyle.cascade;
@@ -63,9 +66,25 @@ class _OTPinDemoScreenState extends State<OTPinDemoScreen> {
   String _currentStateLabel = 'Empty';
 
   @override
+  void initState() {
+    super.initState();
+    _otpController = OTPinController(length: _otpLength);
+  }
+
+  @override
   void dispose() {
     _otpController.dispose();
     super.dispose();
+  }
+
+  void _updateLength(int newLength) {
+    if (newLength == _otpLength) return;
+    _otpController.dispose();
+    setState(() {
+      _otpLength = newLength;
+      _otpController = OTPinController(length: newLength);
+      _currentStateLabel = 'Empty';
+    });
   }
 
   @override
@@ -99,6 +118,10 @@ class _OTPinDemoScreenState extends State<OTPinDemoScreen> {
 
                   // ─── Style Switcher ───
                   _buildStyleSelector(),
+                  const SizedBox(height: 16),
+
+                  // ─── Length Selector ───
+                  _buildLengthSelector(),
                   const SizedBox(height: 24),
 
                   // ─── OTP Card ───
@@ -176,6 +199,69 @@ class _OTPinDemoScreenState extends State<OTPinDemoScreen> {
     );
   }
 
+  Widget _buildLengthSelector() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: const Color(0xFF111726),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFF1E293B)),
+      ),
+      child: Row(
+        children: [
+          Text(
+            'Digits',
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Colors.white54,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: List.generate(6, (i) {
+                final len = i + 3; // 3..8
+                final isSelected = _otpLength == len;
+                return GestureDetector(
+                  onTap: () => _updateLength(len),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? const Color(0xFF2563EB)
+                          : Colors.transparent,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: isSelected
+                            ? const Color(0xFF2563EB)
+                            : const Color(0xFF2A3958),
+                      ),
+                    ),
+                    child: Center(
+                      child: Text(
+                        '$len',
+                        style: TextStyle(
+                          color: isSelected
+                              ? Colors.white
+                              : Colors.white54,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildHeader() {
     return Column(
       children: [
@@ -216,7 +302,7 @@ class _OTPinDemoScreenState extends State<OTPinDemoScreen> {
         ),
         const SizedBox(height: 8),
         Text(
-          'Enter any 4 digits to see the animation',
+          'Enter any $_otpLength digits to see the animation',
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
             color: Colors.white54,
           ),
@@ -256,9 +342,9 @@ class _OTPinDemoScreenState extends State<OTPinDemoScreen> {
           _buildStateIndicator(),
           const SizedBox(height: 32),
           OTPin(
-            key: ValueKey(_selectedStyle),
+            key: ValueKey('${_selectedStyle}_$_otpLength'),
             controller: _otpController,
-            length: 4,
+            length: _otpLength,
             style: _selectedStyle == DemoStyle.orbital
                 ? OrbitalStyle(
                     config: const OrbitalStyleConfig(
@@ -419,7 +505,12 @@ class _OTPinDemoScreenState extends State<OTPinDemoScreen> {
                 child: FilledButton.icon(
                   onPressed: () {
                     _otpController.clear();
-                    _otpController.setText('1234');
+                    _otpController.setText(
+                      List.generate(
+                        _otpLength,
+                        (_) => math.Random().nextInt(10).toString(),
+                      ).join(),
+                    );
                   },
                   icon: const Icon(Icons.play_arrow_rounded, size: 20),
                   label: const Text('Auto Test OTP'),
