@@ -180,6 +180,41 @@ OTPin(
 
 ---
 
+## 🔢 Configurable Length
+
+Control the number of OTP digit inputs with the `length` parameter (works with all styles):
+
+```dart
+// 6-digit OTP
+OTPin(
+  length: 6,
+  style: OrbitalStyle(),
+  onCompleted: (code) async => await api.verify(code),
+)
+
+// 8-digit OTP with Cascade style
+OTPin(
+  length: 8,
+  style: CascadeStyle(),
+  onCompleted: (code) async => await api.verify(code),
+)
+```
+
+When using an external controller, make sure the controller length matches:
+
+```dart
+final controller = OTPinController(length: 6);
+
+OTPin(
+  length: 6,
+  style: CascadeStyle(),
+  controller: controller,
+  onCompleted: (code) async => await api.verify(code),
+)
+```
+
+---
+
 ## 🎮 Programmatic Control
 
 Use `OTPinController` for full programmatic access:
