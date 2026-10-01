@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/abdelhaliem/OTPin/main/doc/logo.png" width="140" alt="OTPin Logo" style="border-radius: 28px;">
+  <img src="https://raw.githubusercontent.com/abdelhaliem/OTPin/main/doc/logo.png" width="180" alt="OTPin Logo" style="border-radius: 28px;">
 </p>
 
 <p align="center">
