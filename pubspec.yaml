@@ -1,0 +1,32 @@
+name: otpin
+description: >-
+  A beautifully animated, customizable OTP input widget for Flutter.
+  Ships with Orbital and Cascade visual styles — each with rich
+  animations for empty, typing, verifying, success, and error states.
+  Zero dependencies. Strategy Pattern architecture.
+version: 0.1.0
+homepage: https://github.com/abdelhaliem/OTPin
+repository: https://github.com/abdelhaliem/OTPin
+issue_tracker: https://github.com/abdelhaliem/OTPin/issues
+
+topics:
+  - otp
+  - widget
+  - animation
+  - input
+  - verification
+
+environment:
+  sdk: ^3.12.1
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
